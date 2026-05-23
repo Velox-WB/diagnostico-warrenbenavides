@@ -1,3 +1,5 @@
+const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbyscrQZeSCJMNDwTyflpLNbW3QfTMOX3IRRqoCgc3M5dEw4MxL0K-qb_WSg1-5fAiE0/exec";
+
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
@@ -48,9 +50,7 @@ exports.handler = async function(event) {
               <p style="font-size: 15px; line-height: 1.7; color: #444;">Aquí está su diagnóstico estratégico personalizado para <strong>${userData.empresa}</strong>.</p>
 
               <div style="background: #f9f9f9; border-left: 4px solid #c9a84c; padding: 24px 28px; margin: 28px 0; border-radius: 0 8px 8px 0;">
-                <div style="font-size: 15px; color: #1a1a1a; line-height: 1.7;">${informe.replace(/
-
-/g, "<br>").replace(/**(.*?)**/g, "<strong>$1</strong>")}</div>
+                <pre style="white-space: pre-wrap; font-family: Georgia, serif; font-size: 14px; line-height: 1.8; color: #1a1a1a; margin: 0;">${informe}</pre>
               </div>
 
               <div style="background: #0a0a0a; padding: 28px; border-radius: 8px; text-align: center; margin: 32px 0;">
@@ -72,7 +72,26 @@ exports.handler = async function(event) {
       })
     });
 
-    // 3. Notificar a Warren (lead notification)
+    // 3. Enviar datos a Google Sheets
+    await fetch(SHEETS_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre: userData.nombre + ' ' + userData.apellidos,
+        empresa: userData.empresa,
+        puesto: userData.puesto,
+        pais: userData.pais,
+        correo: userData.correo,
+        whatsapp: userData.whatsapp,
+        puntaje: userData.puntaje || '',
+        r1: userData.r1 || '', r2: userData.r2 || '', r3: userData.r3 || '',
+        r4: userData.r4 || '', r5: userData.r5 || '', r6: userData.r6 || '',
+        r7: userData.r7 || '', r8: userData.r8 || '', r9: userData.r9 || '',
+        r10: userData.r10 || ''
+      })
+    });
+
+    // 4. Notificar a Warren (lead notification)
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -82,7 +101,7 @@ exports.handler = async function(event) {
       body: JSON.stringify({
         from: 'Diagnóstico nxt LVL <info@warrenbenavides.com>',
         to: ['info@warrenbenavides.com'],
-        subject: `🎯 Nuevo Lead — Diagnóstico Estratégico — ${userData.nombre} ${userData.apellidos} (${userData.empresa})`,
+        subject: `🎯 Nuevo lead nxt LVL — ${userData.nombre} ${userData.apellidos} (${userData.empresa})`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: #0a0a0a; padding: 24px; border-radius: 8px 8px 0 0;">
@@ -99,9 +118,7 @@ exports.handler = async function(event) {
               </table>
               <div style="margin-top: 20px; padding: 16px; background: #fff; border-radius: 6px; border-left: 4px solid #c9a84c;">
                 <p style="margin: 0; font-size: 13px; color: #444; font-weight: bold;">Informe generado:</p>
-                <div style="font-size: 13px; color: #444; line-height: 1.6;">${informe.replace(/
-
-/g, "<br>").replace(/**(.*?)**/g, "<strong>$1</strong>")}</div>
+                <pre style="white-space: pre-wrap; font-size: 12px; color: #555; margin: 8px 0 0 0;">${informe}</pre>
               </div>
             </div>
           </div>
