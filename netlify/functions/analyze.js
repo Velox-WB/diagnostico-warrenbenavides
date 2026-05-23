@@ -97,7 +97,9 @@ exports.handler = async function(event) {
               </table>
               <div style="margin-top: 20px; padding: 16px; background: #fff; border-radius: 6px; border-left: 4px solid #c9a84c;">
                 <p style="margin: 0; font-size: 13px; color: #444; font-weight: bold;">Informe generado:</p>
-                <pre style="white-space: pre-wrap; font-size: 12px; color: #555; margin: 8px 0 0 0;">${informe}</pre>
+                <div style="font-size: 13px; color: #444; line-height: 1.6;">${informe.replace(/
+
+/g, "<br>").replace(/**(.*?)**/g, "<strong>$1</strong>")}</div>
               </div>
             </div>
           </div>
