@@ -48,7 +48,9 @@ exports.handler = async function(event) {
               <p style="font-size: 15px; line-height: 1.7; color: #444;">Aquí está su diagnóstico estratégico personalizado para <strong>${userData.empresa}</strong>.</p>
 
               <div style="background: #f9f9f9; border-left: 4px solid #c9a84c; padding: 24px 28px; margin: 28px 0; border-radius: 0 8px 8px 0;">
-                <pre style="white-space: pre-wrap; font-family: Georgia, serif; font-size: 14px; line-height: 1.8; color: #1a1a1a; margin: 0;">${informe}</pre>
+                <div style="font-size: 15px; color: #1a1a1a; line-height: 1.7;">${informe.replace(/
+
+/g, "<br>").replace(/**(.*?)**/g, "<strong>$1</strong>")}</div>
               </div>
 
               <div style="background: #0a0a0a; padding: 28px; border-radius: 8px; text-align: center; margin: 32px 0;">
