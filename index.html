@@ -461,7 +461,7 @@ Tono: ejecutivo, directo, honesto. No uses lenguaje corporativo ni frases vacía
     const res = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ prompt, userData })
+      body: JSON.stringify({ prompt, userData: { ...userData, puntaje: score + "/40", r1: answers[0] || "", r2: answers[1] || "", r3: answers[2] || "", r4: answers[3] || "", r5: answers[4] || "", r6: answers[5] || "", r7: answers[6] || "", r8: answers[7] || "", r9: answers[8] || "", r10: answers[9] || "" } })
     });
     const data = await res.json();
     const html = data.result;
