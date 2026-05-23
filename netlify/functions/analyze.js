@@ -80,7 +80,7 @@ exports.handler = async function(event) {
       body: JSON.stringify({
         from: 'Diagnóstico nxt LVL <info@warrenbenavides.com>',
         to: ['info@warrenbenavides.com'],
-        subject: `🎯 Nuevo lead nxt LVL — ${userData.nombre} ${userData.apellidos} (${userData.empresa})`,
+        subject: `🎯 Nuevo Lead — Diagnóstico Estratégico — ${userData.nombre} ${userData.apellidos} (${userData.empresa})`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: #0a0a0a; padding: 24px; border-radius: 8px 8px 0 0;">
