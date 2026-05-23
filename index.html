@@ -438,7 +438,7 @@ Tono: ejecutivo, directo, honesto. Sin lenguaje corporativo ni frases vacías.`;
     const res = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({prompt})
+      body: JSON.stringify({ prompt, userData, answers, score })
     });
     const data = await res.json();
     showReport(score, data.result);
