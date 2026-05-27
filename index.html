@@ -109,6 +109,13 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
 .btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Manrope',sans-serif;font-size:0.85rem;font-weight:700;padding:1rem 2rem;border-radius:8px;background:#fff;color:#111;text-decoration:none;transition:background 0.2s ease;width:100%}
 .btn-wa:hover{background:#e8e8e8}
 
+/* ── ERROR ── */
+.error-card{background:#fff;border-radius:14px;padding:3rem 2.5rem;border:0.5px solid #e8e8e8;margin-top:1rem;text-align:center}
+.error-title{font-size:1rem;font-weight:700;color:#111;margin-bottom:0.5rem}
+.error-sub{font-size:0.85rem;color:#888;line-height:1.7;margin-bottom:1.5rem}
+.btn-retry{font-family:'Manrope',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:0.06em;padding:0.9rem 2rem;border-radius:8px;cursor:pointer;border:1.5px solid #111;background:#fff;color:#111;transition:all 0.2s ease}
+.btn-retry:hover{background:#111;color:#fff}
+
 @media(max-width:600px){
   html{font-size:15px}
   .wrap{padding:0 1rem 3rem}
@@ -223,6 +230,15 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
     </div>
   </div>
 
+  <!-- PANTALLA ERROR -->
+  <div class="screen" id="screen-error">
+    <div class="error-card">
+      <div class="error-title">No se pudo generar el informe</div>
+      <p class="error-sub">Ocurrió un error al procesar sus respuestas. Sus datos fueron registrados correctamente — recibirá el informe por correo en breve.<br><br>También puede intentarlo de nuevo.</p>
+      <button class="btn-retry" onclick="retryReport()">Intentar de nuevo</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -322,6 +338,7 @@ const PREGUNTAS = [
 let current = 0;
 let answers = {};
 let userData = {};
+let lastScore = 0;
 
 function startDiag() {
   document.getElementById('screen-intro').classList.remove('active');
@@ -338,7 +355,6 @@ function renderQuestion() {
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('btn-prev').style.display = current > 0 ? 'block' : 'none';
   document.getElementById('btn-next').textContent = current === PREGUNTAS.length - 1 ? 'Ver mis resultados →' : 'Siguiente →';
-
   document.getElementById('questions-container').innerHTML = `
     <div class="card">
       <div class="card-step">Pregunta ${current+1} de ${PREGUNTAS.length}</div>
@@ -402,6 +418,8 @@ function submitForm() {
 
 async function generateReport() {
   const score = Object.values(answers).reduce((a,b)=>a+b,0);
+  lastScore = score;
+
   const respuestas = PREGUNTAS.map((p,i)=>{
     const val = answers[i];
     const opt = p.opts.find(o=>o.v===val);
@@ -440,11 +458,30 @@ Tono: ejecutivo, directo, honesto. Sin lenguaje corporativo ni frases vacías.`;
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ prompt, userData, answers, score })
     });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(()=>({}));
+      throw new Error(errData.error || `HTTP ${res.status}`);
+    }
+
     const data = await res.json();
+    if (!data.result) throw new Error('Sin resultado de IA');
+
     showReport(score, data.result);
+
   } catch(e) {
-    showReport(score, '<p>Hubo un error al generar el informe. Por favor intente de nuevo.</p>');
+    console.error('Error al generar informe:', e.message);
+    document.getElementById('screen-loading').classList.remove('active');
+    document.getElementById('screen-error').classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
   }
+}
+
+function retryReport() {
+  document.getElementById('screen-error').classList.remove('active');
+  document.getElementById('screen-loading').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  generateReport();
 }
 
 function showReport(score, html) {
