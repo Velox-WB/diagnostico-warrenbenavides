@@ -140,10 +140,27 @@ exports.handler = async function(event) {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  try {
-    const { prompt, userData, answers, score } = JSON.parse(event.body);
+  // Headers CORS reutilizables
+  const HEADERS = {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json'
+  };
 
-    // 1. Llamada a Claude (IA)
+  // ── 1. Parse del body ──────────────────────────────────────────────────────
+  let prompt, userData, answers, score;
+  try {
+    ({ prompt, userData, answers, score } = JSON.parse(event.body));
+  } catch (err) {
+    return {
+      statusCode: 400,
+      headers: HEADERS,
+      body: JSON.stringify({ error: 'Body inválido: ' + err.message })
+    };
+  }
+
+  // ── 2. Llamada a Claude (CRÍTICA — si falla, se detiene todo) ──────────────
+  let diagnosticoHtml;
+  try {
     const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -157,10 +174,32 @@ exports.handler = async function(event) {
         messages: [{ role: 'user', content: prompt }]
       })
     });
-    const aiData = await aiRes.json();
-    const diagnosticoHtml = aiData.content[0].text;
 
-    // 2. Google Sheets
+    if (!aiRes.ok) {
+      const errBody = await aiRes.text();
+      throw new Error(`Claude API ${aiRes.status}: ${errBody}`);
+    }
+
+    const aiData = await aiRes.json();
+    diagnosticoHtml = aiData.content[0].text;
+
+    if (!diagnosticoHtml) throw new Error('Claude devolvió contenido vacío');
+
+  } catch (err) {
+    // Si Claude falla, no hay nada que enviar — retornamos error claro
+    return {
+      statusCode: 502,
+      headers: HEADERS,
+      body: JSON.stringify({ error: 'Error generando diagnóstico: ' + err.message })
+    };
+  }
+
+  // A partir de aquí, el diagnóstico existe.
+  // Los pasos 3, 4 y 5 son independientes: un fallo en uno NO detiene los demás.
+  const sideEffectErrors = [];
+
+  // ── 3. Google Sheets (no bloqueante) ──────────────────────────────────────
+  try {
     const sheetsPayload = {
       nombre: `${userData.nombre} ${userData.apellidos}`,
       empresa: userData.empresa,
@@ -173,14 +212,25 @@ exports.handler = async function(event) {
       r4: answers[3], r5: answers[4], r6: answers[5],
       r7: answers[6], r8: answers[7], r9: answers[8], r10: answers[9]
     };
-    await fetch(SHEETS_URL, {
+
+    const sheetsRes = await fetch(SHEETS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(sheetsPayload)
     });
 
-    // 3. Correo a Warren
-    await fetch(RESEND_API, {
+    if (!sheetsRes.ok) {
+      throw new Error(`Sheets HTTP ${sheetsRes.status}`);
+    }
+  } catch (err) {
+    // Solo se loguea — no detiene el flujo
+    sideEffectErrors.push('sheets: ' + err.message);
+    console.error('[analyze] Google Sheets falló:', err.message);
+  }
+
+  // ── 4. Correo a Warren (no bloqueante) ────────────────────────────────────
+  try {
+    const warrenRes = await fetch(RESEND_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -204,8 +254,18 @@ exports.handler = async function(event) {
       })
     });
 
-    // 4. Correo al prospecto
-    await fetch(RESEND_API, {
+    if (!warrenRes.ok) {
+      const errBody = await warrenRes.text();
+      throw new Error(`Resend ${warrenRes.status}: ${errBody}`);
+    }
+  } catch (err) {
+    sideEffectErrors.push('email-warren: ' + err.message);
+    console.error('[analyze] Correo a Warren falló:', err.message);
+  }
+
+  // ── 5. Correo al prospecto (no bloqueante) ────────────────────────────────
+  try {
+    const prospectoRes = await fetch(RESEND_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -227,19 +287,23 @@ exports.handler = async function(event) {
       })
     });
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ result: diagnosticoHtml })
-    };
-
+    if (!prospectoRes.ok) {
+      const errBody = await prospectoRes.text();
+      throw new Error(`Resend ${prospectoRes.status}: ${errBody}`);
+    }
   } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message })
-    };
+    sideEffectErrors.push('email-prospecto: ' + err.message);
+    console.error('[analyze] Correo al prospecto falló:', err.message);
   }
+
+  // ── 6. Respuesta final (siempre 200 si el diagnóstico existe) ─────────────
+  return {
+    statusCode: 200,
+    headers: HEADERS,
+    body: JSON.stringify({
+      result: diagnosticoHtml,
+      // En desarrollo útil para debug; en producción puedes quitar esta línea
+      ...(sideEffectErrors.length > 0 && { warnings: sideEffectErrors })
+    })
+  };
 };
