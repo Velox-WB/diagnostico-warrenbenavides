@@ -189,17 +189,19 @@ exports.handler = async function(event) {
       .replace(/```\s*$/i, '')
       .trim();
 
-    // Si Claude devolvió un documento HTML completo, extraer solo el contenido útil
+    // Si Claude devolvió un documento HTML completo, extraer solo el contenido del body
     if (/<html/i.test(raw)) {
-      // Intentar con </body> presente
-      const withClose = raw.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-      // Intentar sin </body> (Claude a veces lo omite)
-      const withoutClose = raw.match(/<body[^>]*>([\s\S]*)/i);
-
-      if (withClose) {
-        raw = withClose[1].trim();
-      } else if (withoutClose) {
-        raw = withoutClose[1].replace(/<\/html>/i, '').trim();
+      const lowerRaw = raw.toLowerCase();
+      const bodyStart = lowerRaw.indexOf('<body');
+      if (bodyStart !== -1) {
+        // Avanzar hasta el cierre del tag <body ...>
+        const tagEnd = lowerRaw.indexOf('>', bodyStart);
+        if (tagEnd !== -1) {
+          let content = raw.substring(tagEnd + 1);
+          // Quitar </body> y </html> si existen
+          content = content.replace(/<\/body>/i, '').replace(/<\/html>/i, '').trim();
+          raw = content;
+        }
       }
     }
 
