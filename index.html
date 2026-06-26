@@ -453,7 +453,7 @@ Genera un informe estratégico personalizado en español con esta estructura en 
 Tono: ejecutivo, directo, honesto. Sin lenguaje corporativo ni frases vacías.`;
 
   try {
-    const res = await fetch('/.netlify/functions/analyze', {
+    const res = await fetch('/.netlify/functions/analyze-background', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ prompt, userData, answers, score })
