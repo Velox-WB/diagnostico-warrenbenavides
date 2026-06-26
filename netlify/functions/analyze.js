@@ -189,14 +189,22 @@ exports.handler = async function(event) {
       .replace(/```\s*$/i, '')
       .trim();
 
-    // Si Claude devolvió un documento HTML completo, extraer solo el body
+    // Si Claude devolvió un documento HTML completo:
+    // 1. Intentar extraer el <body>
     const bodyMatch = raw.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
     if (bodyMatch) {
       raw = bodyMatch[1].trim();
+    } else {
+      // 2. Si no hay <body>, eliminar todo hasta </head> o </style>
+      raw = raw
+        .replace(/^[\s\S]*?<\/style>\s*/i, '')
+        .replace(/^[\s\S]*?<\/head>\s*/i, '')
+        .replace(/<\/html>\s*$/i, '')
+        .trim();
     }
 
-    // Log para debug (se puede quitar en producción)
-    console.error('[analyze] HTML primeros 300 chars:', raw.substring(0, 300));
+    // Log para debug
+    console.error('[analyze] HTML limpio primeros 300 chars:', raw.substring(0, 300));
 
     diagnosticoHtml = raw;
 
