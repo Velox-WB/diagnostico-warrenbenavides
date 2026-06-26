@@ -189,18 +189,18 @@ exports.handler = async function(event) {
       .replace(/```\s*$/i, '')
       .trim();
 
-    // Si Claude devolvió un documento HTML completo:
-    // 1. Intentar extraer el <body>
-    const bodyMatch = raw.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-    if (bodyMatch) {
-      raw = bodyMatch[1].trim();
-    } else {
-      // 2. Si no hay <body>, eliminar todo hasta </head> o </style>
-      raw = raw
-        .replace(/^[\s\S]*?<\/style>\s*/i, '')
-        .replace(/^[\s\S]*?<\/head>\s*/i, '')
-        .replace(/<\/html>\s*$/i, '')
-        .trim();
+    // Si Claude devolvió un documento HTML completo, extraer solo el contenido útil
+    if (/<html/i.test(raw)) {
+      // Intentar con </body> presente
+      const withClose = raw.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+      // Intentar sin </body> (Claude a veces lo omite)
+      const withoutClose = raw.match(/<body[^>]*>([\s\S]*)/i);
+
+      if (withClose) {
+        raw = withClose[1].trim();
+      } else if (withoutClose) {
+        raw = withoutClose[1].replace(/<\/html>/i, '').trim();
+      }
     }
 
     // Log para debug
