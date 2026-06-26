@@ -87,26 +87,16 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:0.88rem;color:#666;line-height:1.7}
 
-/* ── INFORME ── */
-.report-card{background:#fff;border-radius:14px;padding:2.5rem;border:0.5px solid #e8e8e8;margin-top:1rem}
-.report-header{background:#111;border-radius:10px;padding:2rem;margin-bottom:1.75rem}
-.report-ey{font-size:0.6rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#444;margin-bottom:0.75rem}
-.report-name{font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:-0.02em;margin-bottom:0.25rem}
-.report-empresa{font-size:0.85rem;color:#777}
-.report-score-wrap{display:flex;align-items:center;gap:1rem;margin-top:1.25rem;padding-top:1.25rem;border-top:0.5px solid #1e1e1e}
-.report-score-num{font-size:2.5rem;font-weight:800;color:#888;letter-spacing:-0.04em;line-height:1}
-.report-score-label{font-size:0.7rem;color:#666;line-height:1.6}
-.report-body{font-size:0.92rem;color:#333;line-height:1.85}
-.report-body h3{font-size:1rem;font-weight:700;color:#111;margin:1.5rem 0 0.75rem;letter-spacing:-0.01em}
-.report-body h3:first-child{margin-top:0}
-.report-body ul{padding-left:1.25rem;margin-bottom:0.75rem}
-.report-body ul li{margin-bottom:0.4rem;color:#444}
-.report-body p{margin-bottom:0.75rem;color:#444}
-.report-body strong{color:#111}
-.report-cta{background:#111;border-radius:10px;padding:2rem;margin-top:1.75rem;text-align:center}
-.report-cta-h{font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:0.5rem}
-.report-cta-sub{font-size:0.85rem;color:#888;margin-bottom:1.25rem}
-.btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Manrope',sans-serif;font-size:0.85rem;font-weight:700;padding:1rem 2rem;border-radius:8px;background:#fff;color:#111;text-decoration:none;transition:background 0.2s ease;width:100%}
+/* ── CONFIRMACIÓN ── */
+.confirm-card{background:#fff;border-radius:14px;padding:4rem 2.5rem;border:0.5px solid #e8e8e8;margin-top:1rem;text-align:center}
+.confirm-icon{font-size:2.5rem;margin-bottom:1.25rem}
+.confirm-h{font-size:1.25rem;font-weight:800;color:#111;letter-spacing:-0.02em;margin-bottom:0.5rem}
+.confirm-sub{font-size:0.88rem;color:#666;line-height:1.7;margin-bottom:2rem}
+.confirm-email{font-weight:700;color:#111}
+.confirm-cta{background:#111;border-radius:10px;padding:1.75rem;margin-top:1.5rem}
+.confirm-cta-h{font-size:0.95rem;font-weight:800;color:#fff;margin-bottom:0.4rem}
+.confirm-cta-sub{font-size:0.8rem;color:#666;margin-bottom:1rem}
+.btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Manrope',sans-serif;font-size:0.85rem;font-weight:700;padding:0.9rem 2rem;border-radius:8px;background:#fff;color:#111;text-decoration:none;transition:background 0.2s ease}
 .btn-wa:hover{background:#e8e8e8}
 
 /* ── ERROR ── */
@@ -126,8 +116,7 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
   .form-card{padding:1.5rem 1.25rem}
   .form-grid{grid-template-columns:1fr}
   .form-group.full{grid-column:1}
-  .report-card{padding:1.5rem 1.25rem}
-  .report-header{padding:1.5rem}
+  .confirm-card{padding:2.5rem 1.5rem}
   .nav-controls{flex-direction:column}
   .btn-ghost{width:100%;text-align:center}
 }
@@ -151,7 +140,7 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
       <div class="intro-meta">
         <div class="intro-meta-item"><div class="intro-meta-dot"></div>10 preguntas</div>
         <div class="intro-meta-item"><div class="intro-meta-dot"></div>5 minutos</div>
-        <div class="intro-meta-item"><div class="intro-meta-dot"></div>Informe inmediato con IA</div>
+        <div class="intro-meta-item"><div class="intro-meta-dot"></div>Informe por correo con IA</div>
         <div class="intro-meta-item"><div class="intro-meta-dot"></div>Sin costo</div>
       </div>
       <button class="btn-start" onclick="startDiag()">INICIAR DIAGNÓSTICO →</button>
@@ -209,23 +198,16 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
     </div>
   </div>
 
-  <!-- PANTALLA INFORME -->
-  <div class="screen" id="screen-report">
-    <div class="report-card">
-      <div class="report-header">
-        <div class="report-ey">Diagnóstico Estratégico</div>
-        <div class="report-name" id="r-name"></div>
-        <div class="report-empresa" id="r-empresa"></div>
-        <div class="report-score-wrap">
-          <div class="report-score-num" id="r-score"></div>
-          <div class="report-score-label">Índice de Madurez Estratégica<br><span style="color:#555;font-size:0.75rem;">Escala del 1 al 40</span></div>
-        </div>
-      </div>
-      <div class="report-body" id="r-body"></div>
-      <div class="report-cta">
-        <div class="report-cta-h">El siguiente paso es una conversación.</div>
-        <p class="report-cta-sub">Este diagnóstico es el punto de partida. La claridad estratégica real viene del trabajo conjunto.</p>
-        <a class="btn-wa" id="r-wa-btn" href="#" target="_blank">💬 Conversemos por WhatsApp</a>
+  <!-- PANTALLA CONFIRMACIÓN -->
+  <div class="screen" id="screen-confirm">
+    <div class="confirm-card">
+      <div class="confirm-icon">✅</div>
+      <div class="confirm-h">Su diagnóstico está en camino.</div>
+      <p class="confirm-sub">En los próximos minutos recibirá el informe completo en<br><span class="confirm-email" id="confirm-email"></span></p>
+      <div class="confirm-cta">
+        <div class="confirm-cta-h">El siguiente paso es una conversación.</div>
+        <p class="confirm-cta-sub">Este diagnóstico es el punto de partida.<br>La claridad estratégica real viene del trabajo conjunto.</p>
+        <a class="btn-wa" id="confirm-wa-btn" href="#" target="_blank">💬 Conversemos por WhatsApp</a>
       </div>
     </div>
   </div>
@@ -338,7 +320,6 @@ const PREGUNTAS = [
 let current = 0;
 let answers = {};
 let userData = {};
-let lastScore = 0;
 
 function startDiag() {
   document.getElementById('screen-intro').classList.remove('active');
@@ -350,30 +331,28 @@ function startDiag() {
 function renderQuestion() {
   const q = PREGUNTAS[current];
   const pct = Math.round((current / PREGUNTAS.length) * 100);
-  document.getElementById('progress-label').textContent = `Pregunta ${current+1} de ${PREGUNTAS.length}`;
+  document.getElementById('progress-label').textContent = 'Pregunta ' + (current+1) + ' de ' + PREGUNTAS.length;
   document.getElementById('progress-pct').textContent = pct + '%';
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('btn-prev').style.display = current > 0 ? 'block' : 'none';
   document.getElementById('btn-next').textContent = current === PREGUNTAS.length - 1 ? 'Ver mis resultados →' : 'Siguiente →';
-  document.getElementById('questions-container').innerHTML = `
-    <div class="card">
-      <div class="card-step">Pregunta ${current+1} de ${PREGUNTAS.length}</div>
-      <div class="card-q">${q.q}</div>
-      <div class="options">
-        ${q.opts.map(o=>`
-          <div class="opt ${answers[current]===o.v?'selected':''}" onclick="selectOpt(${o.v},this)">
-            <div class="opt-letter">${o.l}</div>
-            <div class="opt-text">${o.t}</div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
+  document.getElementById('questions-container').innerHTML =
+    '<div class="card">' +
+    '<div class="card-step">Pregunta ' + (current+1) + ' de ' + PREGUNTAS.length + '</div>' +
+    '<div class="card-q">' + q.q + '</div>' +
+    '<div class="options">' +
+    q.opts.map(function(o) {
+      return '<div class="opt ' + (answers[current]===o.v?'selected':'') + '" onclick="selectOpt(' + o.v + ',this)">' +
+        '<div class="opt-letter">' + o.l + '</div>' +
+        '<div class="opt-text">' + o.t + '</div>' +
+        '</div>';
+    }).join('') +
+    '</div></div>';
 }
 
 function selectOpt(val, el) {
   answers[current] = val;
-  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  document.querySelectorAll('.opt').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
 }
 
@@ -395,10 +374,10 @@ function prevQ() {
 }
 
 function submitForm() {
-  const fields = ['f-nombre','f-apellidos','f-empresa','f-puesto','f-correo','f-whatsapp','f-pais'];
-  const err = document.getElementById('form-error');
-  for (const f of fields) {
-    if (!document.getElementById(f).value.trim()) { err.classList.add('show'); return; }
+  var fields = ['f-nombre','f-apellidos','f-empresa','f-puesto','f-correo','f-whatsapp','f-pais'];
+  var err = document.getElementById('form-error');
+  for (var i = 0; i < fields.length; i++) {
+    if (!document.getElementById(fields[i]).value.trim()) { err.classList.add('show'); return; }
   }
   err.classList.remove('show');
   userData = {
@@ -417,57 +396,32 @@ function submitForm() {
 }
 
 async function generateReport() {
-  const score = Object.values(answers).reduce((a,b)=>a+b,0);
-  lastScore = score;
+  var score = Object.values(answers).reduce(function(a,b){return a+b;}, 0);
 
-  const respuestas = PREGUNTAS.map((p,i)=>{
-    const val = answers[i];
-    const opt = p.opts.find(o=>o.v===val);
-    return `Pregunta ${i+1}: "${p.q}"\nRespuesta elegida: "${opt.t}" (Nivel ${val}/4)`;
+  var respuestas = PREGUNTAS.map(function(p, i) {
+    var val = answers[i];
+    var opt = p.opts.find(function(o){return o.v===val;});
+    return 'Pregunta ' + (i+1) + ': "' + p.q + '"\nRespuesta elegida: "' + opt.t + '" (Nivel ' + val + '/4)';
   }).join('\n\n');
 
-  const prompt = `Eres Warren Benavides, Consultor en Estrategia de Negocio. Has recibido las respuestas de un diagnóstico estratégico de ${userData.nombre} ${userData.apellidos}, ${userData.puesto} de ${userData.empresa} en ${userData.pais}.
-
-Puntaje total: ${score}/40
-
-Respuestas:
-${respuestas}
-
-Genera un informe estratégico personalizado en español con esta estructura en HTML limpio (solo usa <h3>, <p>, <ul>, <li>, <strong>):
-
-<h3>Resumen Ejecutivo</h3>
-[2-3 párrafos honestos y directos sobre el estado estratégico del negocio. Menciona a ${userData.nombre} por nombre. Sé específico.]
-
-<h3>Brechas Estratégicas Identificadas</h3>
-[3-5 brechas concretas basadas en las respuestas. Específico sobre qué área falla y por qué importa.]
-
-<h3>Áreas de Oportunidad</h3>
-[3-4 oportunidades concretas si resuelve las brechas. Cuantifica el impacto cuando sea posible.]
-
-<h3>Recomendaciones Prioritarias</h3>
-[3 recomendaciones accionables ordenadas por prioridad. Específicas, no genéricas.]
-
-<h3>Próximo Paso</h3>
-[1 párrafo que invite a ${userData.nombre} a conversar con Warren. Directo, ejecutivo, sin presión.]
-
-Tono: ejecutivo, directo, honesto. Sin lenguaje corporativo ni frases vacías.`;
+  var prompt = 'Eres Warren Benavides, Consultor en Estrategia de Negocio. Has recibido las respuestas de un diagnóstico estratégico de ' + userData.nombre + ' ' + userData.apellidos + ', ' + userData.puesto + ' de ' + userData.empresa + ' en ' + userData.pais + '.\n\nPuntaje total: ' + score + '/40\n\nRespuestas:\n' + respuestas + '\n\nGenera un informe estratégico personalizado en español con esta estructura en HTML limpio (solo usa <h3>, <p>, <ul>, <li>, <strong>):\n\n<h3>Resumen Ejecutivo</h3>\n[2-3 párrafos honestos y directos sobre el estado estratégico del negocio. Menciona a ' + userData.nombre + ' por nombre. Sé específico.]\n\n<h3>Brechas Estratégicas Identificadas</h3>\n[3-5 brechas concretas basadas en las respuestas. Específico sobre qué área falla y por qué importa.]\n\n<h3>Áreas de Oportunidad</h3>\n[3-4 oportunidades concretas si resuelve las brechas. Cuantifica el impacto cuando sea posible.]\n\n<h3>Recomendaciones Prioritarias</h3>\n[3 recomendaciones accionables ordenadas por prioridad. Específicas, no genéricas.]\n\n<h3>Próximo Paso</h3>\n[1 párrafo que invite a ' + userData.nombre + ' a conversar con Warren. Directo, ejecutivo, sin presión.]\n\nTono: ejecutivo, directo, honesto. Sin lenguaje corporativo ni frases vacías.';
 
   try {
-    const res = await fetch('/.netlify/functions/analyze', {
+    var res = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ prompt, userData, answers, score })
+      body: JSON.stringify({ prompt: prompt, userData: userData, answers: answers, score: score })
     });
 
     if (!res.ok) {
-      const errData = await res.json().catch(()=>({}));
-      throw new Error(errData.error || `HTTP ${res.status}`);
+      var errData = await res.json().catch(function(){return {};});
+      throw new Error(errData.error || 'HTTP ' + res.status);
     }
 
-    const data = await res.json();
+    var data = await res.json();
     if (!data.result) throw new Error('Sin resultado de IA');
 
-    showReport(score, data.result);
+    showConfirm(score);
 
   } catch(e) {
     console.error('Error al generar informe:', e.message);
@@ -484,15 +438,12 @@ function retryReport() {
   generateReport();
 }
 
-function showReport(score, html) {   document.getElementById('screen-loading').classList.remove('active');   document.getElementById('screen-report').classList.add('active');   document.getElementById('r-name').textContent = userData.nombre + ' ' + userData.apellidos;   document.getElementById('r-empresa').textContent = userData.puesto + ' · ' + userData.empresa + ' · ' + userData.pais;   document.getElementById('r-score').textContent = score;   document.getElementById('r-body').innerHTML = `     <div style="text-align:center;padding:2rem 0">       <div style="font-size:2rem;margin-bottom:1rem">✅</div>       <p style="font-size:1rem;font-weight:700;color:#111;margin-bottom:0.5rem">Su diagnóstico está en camino.</p>       <p style="font-size:0.88rem;color:#666;line-height:1.7">En los próximos minutos recibirá el informe completo<br>en <strong>${userData.correo}</strong></p>     </div>   `;   const msg = encodeURIComponent(`Hola Warren, acabo de completar el diagnóstico estratégico. Soy ${userData.nombre} ${userData.apellidos}, ${userData.puesto} de ${userData.empresa}. Me interesa conversar sobre los resultados.`);   document.getElementById('r-wa-btn').href = `https://wa.me/50688813232?text=${msg}`;   window.scrollTo({top:0,behavior:'smooth'}); }
+function showConfirm(score) {
   document.getElementById('screen-loading').classList.remove('active');
-  document.getElementById('screen-report').classList.add('active');
-  document.getElementById('r-name').textContent = userData.nombre + ' ' + userData.apellidos;
-  document.getElementById('r-empresa').textContent = userData.puesto + ' · ' + userData.empresa + ' · ' + userData.pais;
-  document.getElementById('r-score').textContent = score;
-  document.getElementById('r-body').innerHTML = html;
-  const msg = encodeURIComponent(`Hola Warren, acabo de completar el diagnóstico estratégico. Soy ${userData.nombre} ${userData.apellidos}, ${userData.puesto} de ${userData.empresa}. Me interesa conversar sobre los resultados.`);
-  document.getElementById('r-wa-btn').href = `https://wa.me/50688813232?text=${msg}`;
+  document.getElementById('screen-confirm').classList.add('active');
+  document.getElementById('confirm-email').textContent = userData.correo;
+  var msg = encodeURIComponent('Hola Warren, acabo de completar el diagnóstico estratégico. Soy ' + userData.nombre + ' ' + userData.apellidos + ', ' + userData.puesto + ' de ' + userData.empresa + '. Me interesa conversar sobre los resultados.');
+  document.getElementById('confirm-wa-btn').href = 'https://wa.me/50688813232?text=' + msg;
   window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
