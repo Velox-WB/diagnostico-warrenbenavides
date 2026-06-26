@@ -181,7 +181,7 @@ exports.handler = async function(event) {
     }
 
     const aiData = await aiRes.json();
-    diagnosticoHtml = aiData.content[0].text;
+    diagnosticoHtml = aiData.content[0].text   .replace(/^```html\s*/i, '')   .replace(/^```\s*/i, '')   .replace(/```\s*$/i, '')   .trim();
 
     if (!diagnosticoHtml) throw new Error('Claude devolvió contenido vacío');
 
