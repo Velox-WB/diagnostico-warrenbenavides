@@ -140,7 +140,6 @@ exports.handler = async function(event) {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  // Headers CORS reutilizables
   const HEADERS = {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
@@ -181,14 +180,29 @@ exports.handler = async function(event) {
     }
 
     const aiData = await aiRes.json();
-// Si Claude devolvió un documento HTML completo, extraer solo el body
-const bodyMatch = diagnosticoHtml.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-if (bodyMatch) diagnosticoHtml = bodyMatch[1].trim();
-console.error('[analyze] HTML primeros 300 chars:', diagnosticoHtml.substring(0, 300));
+    let raw = aiData.content[0].text;
+
+    // Limpiar backticks de markdown si Claude los agregó
+    raw = raw
+      .replace(/^```html\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```\s*$/i, '')
+      .trim();
+
+    // Si Claude devolvió un documento HTML completo, extraer solo el body
+    const bodyMatch = raw.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    if (bodyMatch) {
+      raw = bodyMatch[1].trim();
+    }
+
+    // Log para debug (se puede quitar en producción)
+    console.error('[analyze] HTML primeros 300 chars:', raw.substring(0, 300));
+
+    diagnosticoHtml = raw;
+
     if (!diagnosticoHtml) throw new Error('Claude devolvió contenido vacío');
 
   } catch (err) {
-    // Si Claude falla, no hay nada que enviar — retornamos error claro
     return {
       statusCode: 502,
       headers: HEADERS,
@@ -196,8 +210,8 @@ console.error('[analyze] HTML primeros 300 chars:', diagnosticoHtml.substring(0,
     };
   }
 
-  // A partir de aquí, el diagnóstico existe.
-  // Los pasos 3, 4 y 5 son independientes: un fallo en uno NO detiene los demás.
+  // A partir de aquí el diagnóstico existe.
+  // Los pasos 3, 4 y 5 son independientes: un fallo NO detiene los demás.
   const sideEffectErrors = [];
 
   // ── 3. Google Sheets (no bloqueante) ──────────────────────────────────────
@@ -221,11 +235,8 @@ console.error('[analyze] HTML primeros 300 chars:', diagnosticoHtml.substring(0,
       body: JSON.stringify(sheetsPayload)
     });
 
-    if (!sheetsRes.ok) {
-      throw new Error(`Sheets HTTP ${sheetsRes.status}`);
-    }
+    if (!sheetsRes.ok) throw new Error(`Sheets HTTP ${sheetsRes.status}`);
   } catch (err) {
-    // Solo se loguea — no detiene el flujo
     sideEffectErrors.push('sheets: ' + err.message);
     console.error('[analyze] Google Sheets falló:', err.message);
   }
@@ -304,7 +315,6 @@ console.error('[analyze] HTML primeros 300 chars:', diagnosticoHtml.substring(0,
     headers: HEADERS,
     body: JSON.stringify({
       result: diagnosticoHtml,
-      // En desarrollo útil para debug; en producción puedes quitar esta línea
       ...(sideEffectErrors.length > 0 && { warnings: sideEffectErrors })
     })
   };
