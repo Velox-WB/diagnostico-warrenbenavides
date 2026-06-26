@@ -484,7 +484,7 @@ function retryReport() {
   generateReport();
 }
 
-function showReport(score, html) {
+function showReport(score, html) {   document.getElementById('screen-loading').classList.remove('active');   document.getElementById('screen-report').classList.add('active');   document.getElementById('r-name').textContent = userData.nombre + ' ' + userData.apellidos;   document.getElementById('r-empresa').textContent = userData.puesto + ' · ' + userData.empresa + ' · ' + userData.pais;   document.getElementById('r-score').textContent = score;   document.getElementById('r-body').innerHTML = `     <div style="text-align:center;padding:2rem 0">       <div style="font-size:2rem;margin-bottom:1rem">✅</div>       <p style="font-size:1rem;font-weight:700;color:#111;margin-bottom:0.5rem">Su diagnóstico está en camino.</p>       <p style="font-size:0.88rem;color:#666;line-height:1.7">En los próximos minutos recibirá el informe completo<br>en <strong>${userData.correo}</strong></p>     </div>   `;   const msg = encodeURIComponent(`Hola Warren, acabo de completar el diagnóstico estratégico. Soy ${userData.nombre} ${userData.apellidos}, ${userData.puesto} de ${userData.empresa}. Me interesa conversar sobre los resultados.`);   document.getElementById('r-wa-btn').href = `https://wa.me/50688813232?text=${msg}`;   window.scrollTo({top:0,behavior:'smooth'}); }
   document.getElementById('screen-loading').classList.remove('active');
   document.getElementById('screen-report').classList.add('active');
   document.getElementById('r-name').textContent = userData.nombre + ' ' + userData.apellidos;
