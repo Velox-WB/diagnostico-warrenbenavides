@@ -181,8 +181,10 @@ exports.handler = async function(event) {
     }
 
     const aiData = await aiRes.json();
-    diagnosticoHtml = aiData.content[0].text   .replace(/^```html\s*/i, '')   .replace(/^```\s*/i, '')   .replace(/```\s*$/i, '')   .trim();  // Si Claude devolvió un documento HTML completo, extraer solo el body const bodyMatch = diagnosticoHtml.match(/<body[^>]*>([\s\S]*)<\/body>/i); if (bodyMatch) diagnosticoHtml = bodyMatch[1].trim();
-
+// Si Claude devolvió un documento HTML completo, extraer solo el body
+const bodyMatch = diagnosticoHtml.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+if (bodyMatch) diagnosticoHtml = bodyMatch[1].trim();
+console.error('[analyze] HTML primeros 300 chars:', diagnosticoHtml.substring(0, 300));
     if (!diagnosticoHtml) throw new Error('Claude devolvió contenido vacío');
 
   } catch (err) {
