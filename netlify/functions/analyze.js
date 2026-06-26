@@ -183,34 +183,31 @@ exports.handler = async function(event) {
     const aiData = await aiRes.json();
     let raw = aiData.content[0].text;
 
-    // Limpiar backticks de markdown si Claude los agregó
+    // Log del raw original para debug
+    console.error('[analyze] RAW primeros 200 chars:', JSON.stringify(raw.substring(0, 200)));
+
+    // Limpiar backticks
     raw = raw
       .replace(/^```html\s*/i, '')
       .replace(/^```\s*/i, '')
       .replace(/```\s*$/i, '')
       .trim();
 
-    // Si Claude devolvió un documento HTML completo, extraer solo el contenido del body
-    if (/<html/i.test(raw)) {
-      const lowerRaw = raw.toLowerCase();
-      const bodyStart = lowerRaw.indexOf('<body');
-      if (bodyStart !== -1) {
-        // Avanzar hasta el cierre del tag <body ...>
-        const tagEnd = lowerRaw.indexOf('>', bodyStart);
-        if (tagEnd !== -1) {
-          let content = raw.substring(tagEnd + 1);
-          // Quitar </body> y </html> si existen
-          content = content.replace(/<\/body>/i, '').replace(/<\/html>/i, '').trim();
-          raw = content;
-        }
+    // Extraer contenido del body si Claude devolvió documento completo
+    if (raw.toLowerCase().includes('<body')) {
+      const idx = raw.toLowerCase().indexOf('<body');
+      const closeTag = raw.indexOf('>', idx);
+      if (closeTag !== -1) {
+        raw = raw.substring(closeTag + 1)
+          .replace(/<\/body>/gi, '')
+          .replace(/<\/html>/gi, '')
+          .trim();
       }
     }
 
-    // Log para debug
-    console.error('[analyze] HTML limpio primeros 300 chars:', raw.substring(0, 300));
+    console.error('[analyze] LIMPIO primeros 200 chars:', JSON.stringify(raw.substring(0, 200)));
 
     diagnosticoHtml = raw;
-
     if (!diagnosticoHtml) throw new Error('Claude devolvió contenido vacío');
 
   } catch (err) {
