@@ -317,7 +317,38 @@ exports.handler = async function(event) {
     console.error('[analyze] Correo al prospecto falló:', err.message);
   }
 
-  // ── 6. Respuesta final (siempre 200 si el diagnóstico existe) ─────────────
+  // ── 6. Alerta a Warren si hubo errores secundarios ────────────────────────
+  if (sideEffectErrors.length > 0) {
+    try {
+      await fetch(RESEND_API, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
+        },
+        body: JSON.stringify({
+          from: FROM_EMAIL,
+          to: [WARREN_EMAIL],
+          subject: `⚠️ Alerta del sistema — Diagnóstico Estratégico`,
+          html: `<p style="font-family:sans-serif;font-size:14px;color:#111;">
+            <strong>Se detectaron errores en el sistema del Diagnóstico Estratégico.</strong><br><br>
+            Los siguientes procesos fallaron:<br><br>
+            <ul>${sideEffectErrors.map(e => `<li>${e}</li>`).join('')}</ul>
+            <br>
+            El diagnóstico sí fue generado y mostrado al usuario en pantalla.<br><br>
+            Revisá los logs en:<br>
+            <a href="https://app.netlify.com/projects/inquisitive-jelly-3090da/logs/functions">
+              Netlify → Functions → analyze
+            </a>
+          </p>`
+        })
+      });
+    } catch (alertErr) {
+      console.error('[analyze] Alerta de error falló:', alertErr.message);
+    }
+  }
+
+  // ── 7. Respuesta final (siempre 200 si el diagnóstico existe) ─────────────
   return {
     statusCode: 200,
     headers: HEADERS,
