@@ -181,7 +181,7 @@ exports.handler = async function(event) {
     }
 
     const aiData = await aiRes.json();
-    diagnosticoHtml = aiData.content[0].text   .replace(/^```html\s*/i, '')   .replace(/^```\s*/i, '')   .replace(/```\s*$/i, '')   .trim();
+    diagnosticoHtml = aiData.content[0].text   .replace(/^```html\s*/i, '')   .replace(/^```\s*/i, '')   .replace(/```\s*$/i, '')   .trim();  // Si Claude devolvió un documento HTML completo, extraer solo el body const bodyMatch = diagnosticoHtml.match(/<body[^>]*>([\s\S]*)<\/body>/i); if (bodyMatch) diagnosticoHtml = bodyMatch[1].trim();
 
     if (!diagnosticoHtml) throw new Error('Claude devolvió contenido vacío');
 
