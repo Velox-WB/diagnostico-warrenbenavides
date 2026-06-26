@@ -170,6 +170,7 @@ exports.handler = async function(event) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 1500,
+        system: 'Responde ÚNICAMENTE con fragmentos HTML usando solo estas etiquetas: <h3>, <p>, <ul>, <li>, <strong>. NUNCA incluyas <!DOCTYPE>, <html>, <head>, <body>, <style> ni ninguna etiqueta de documento. Solo el contenido interno directo.',
         messages: [{ role: 'user', content: prompt }]
       })
     });
