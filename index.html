@@ -87,7 +87,33 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:0.88rem;color:#666;line-height:1.7}
 
-/* ── CONFIRMACIÓN ── */
+/* ── PANTALLA RESULTADO ── */
+.result-header{background:#111;border-radius:14px;padding:2.5rem;margin-top:1rem;margin-bottom:1.25rem}
+.result-ey{font-size:0.6rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#888;margin-bottom:0.75rem}
+.result-name{font-size:1.6rem;font-weight:800;letter-spacing:-0.03em;color:#fff;margin-bottom:0.5rem}
+.result-score-wrap{display:flex;align-items:baseline;gap:0.5rem;margin-top:1.25rem}
+.result-score-num{font-size:3rem;font-weight:800;color:#fff;letter-spacing:-0.04em;line-height:1}
+.result-score-den{font-size:1rem;font-weight:600;color:#666}
+.result-score-label{font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-top:0.4rem}
+
+.result-body{background:#fff;border-radius:14px;padding:2.5rem;border:0.5px solid #e8e8e8;margin-bottom:1.25rem}
+.result-body h3{font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-top:2rem;margin-bottom:0.75rem;padding-top:2rem;border-top:0.5px solid #ebebeb}
+.result-body h3:first-child{margin-top:0;padding-top:0;border-top:none}
+.result-body p{font-size:0.95rem;color:#333;line-height:1.75;margin-bottom:0.75rem}
+.result-body ul{padding-left:1.25rem;margin-bottom:0.75rem}
+.result-body li{font-size:0.95rem;color:#333;line-height:1.75;margin-bottom:0.4rem}
+.result-body strong{font-weight:700;color:#111}
+
+.result-cta{background:#111;border-radius:14px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+.result-cta-copy{}
+.result-cta-h{font-size:1rem;font-weight:800;color:#fff;margin-bottom:0.35rem}
+.result-cta-sub{font-size:0.82rem;color:#666;line-height:1.6}
+.btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Manrope',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:0.06em;white-space:nowrap;padding:0.9rem 2rem;border-radius:8px;background:#fff;color:#111;text-decoration:none;transition:background 0.2s ease}
+.btn-wa:hover{background:#e8e8e8}
+
+.result-email-note{font-size:0.75rem;color:#999;text-align:center;margin-top:1rem;line-height:1.6}
+
+/* ── CONFIRMACIÓN (fallback, ya no se usa como pantalla principal) ── */
 .confirm-card{background:#fff;border-radius:14px;padding:4rem 2.5rem;border:0.5px solid #e8e8e8;margin-top:1rem;text-align:center}
 .confirm-icon{font-size:2.5rem;margin-bottom:1.25rem}
 .confirm-h{font-size:1.25rem;font-weight:800;color:#111;letter-spacing:-0.02em;margin-bottom:0.5rem}
@@ -96,8 +122,6 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
 .confirm-cta{background:#111;border-radius:10px;padding:1.75rem;margin-top:1.5rem}
 .confirm-cta-h{font-size:0.95rem;font-weight:800;color:#fff;margin-bottom:0.4rem}
 .confirm-cta-sub{font-size:0.8rem;color:#666;margin-bottom:1rem}
-.btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Manrope',sans-serif;font-size:0.85rem;font-weight:700;padding:0.9rem 2rem;border-radius:8px;background:#fff;color:#111;text-decoration:none;transition:background 0.2s ease}
-.btn-wa:hover{background:#e8e8e8}
 
 /* ── ERROR ── */
 .error-card{background:#fff;border-radius:14px;padding:3rem 2.5rem;border:0.5px solid #e8e8e8;margin-top:1rem;text-align:center}
@@ -119,6 +143,10 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
   .confirm-card{padding:2.5rem 1.5rem}
   .nav-controls{flex-direction:column}
   .btn-ghost{width:100%;text-align:center}
+  .result-header{padding:2rem 1.5rem}
+  .result-body{padding:1.75rem 1.5rem}
+  .result-cta{flex-direction:column;align-items:flex-start;padding:1.75rem 1.5rem}
+  .result-score-num{font-size:2.5rem}
 }
 </style>
 </head>
@@ -194,22 +222,30 @@ body{font-family:'Manrope',sans-serif;background:#f5f5f5;color:#111;min-height:1
   <div class="screen" id="screen-loading">
     <div class="loading-card">
       <div class="loading-spinner"></div>
-      <p class="loading-text">Analizando sus respuestas con IA...<br>Esto tomará unos segundos.</p>
+      <p class="loading-text">Analizando sus respuestas...<br>Esto tomará unos segundos.</p>
     </div>
   </div>
 
-  <!-- PANTALLA CONFIRMACIÓN -->
-  <div class="screen" id="screen-confirm">
-    <div class="confirm-card">
-      <div class="confirm-icon">✅</div>
-      <div class="confirm-h">Su diagnóstico está en camino.</div>
-      <p class="confirm-sub">En los próximos minutos recibirá el informe completo en<br><span class="confirm-email" id="confirm-email"></span></p>
-      <div class="confirm-cta">
-        <div class="confirm-cta-h">El siguiente paso es una conversación.</div>
-        <p class="confirm-cta-sub">Este diagnóstico es el punto de partida.<br>La claridad estratégica real viene del trabajo conjunto.</p>
-        <a class="btn-wa" id="confirm-wa-btn" href="#" target="_blank">💬 Conversemos por WhatsApp</a>
+  <!-- PANTALLA RESULTADO -->
+  <div class="screen" id="screen-result">
+    <div class="result-header">
+      <div class="result-ey">Diagnóstico Estratégico</div>
+      <div class="result-name" id="result-name"></div>
+      <div class="result-score-wrap">
+        <div class="result-score-num" id="result-score-num"></div>
+        <div class="result-score-den">/40</div>
       </div>
+      <div class="result-score-label">Puntaje estratégico</div>
     </div>
+    <div class="result-body" id="result-body"></div>
+    <div class="result-cta">
+      <div class="result-cta-copy">
+        <div class="result-cta-h">El siguiente paso es una conversación.</div>
+        <div class="result-cta-sub">Este diagnóstico es el punto de partida.<br>La claridad estratégica real viene del trabajo conjunto.</div>
+      </div>
+      <a class="btn-wa" id="result-wa-btn" href="#" target="_blank">💬 Conversemos por WhatsApp</a>
+    </div>
+    <p class="result-email-note">Una copia de este informe fue enviada a <strong id="result-email-note-addr"></strong></p>
   </div>
 
   <!-- PANTALLA ERROR -->
@@ -421,7 +457,7 @@ async function generateReport() {
     var data = await res.json();
     if (!data.result) throw new Error('Sin resultado de IA');
 
-    showConfirm(score);
+    showResult(score, data.result);
 
   } catch(e) {
     console.error('Error al generar informe:', e.message);
@@ -438,12 +474,18 @@ function retryReport() {
   generateReport();
 }
 
-function showConfirm(score) {
+function showResult(score, reportHtml) {
   document.getElementById('screen-loading').classList.remove('active');
-  document.getElementById('screen-confirm').classList.add('active');
-  document.getElementById('confirm-email').textContent = userData.correo;
+  document.getElementById('screen-result').classList.add('active');
+
+  document.getElementById('result-name').textContent = userData.nombre + ' ' + userData.apellidos;
+  document.getElementById('result-score-num').textContent = score;
+  document.getElementById('result-body').innerHTML = reportHtml;
+  document.getElementById('result-email-note-addr').textContent = userData.correo;
+
   var msg = encodeURIComponent('Hola Warren, acabo de completar el diagnóstico estratégico. Soy ' + userData.nombre + ' ' + userData.apellidos + ', ' + userData.puesto + ' de ' + userData.empresa + '. Me interesa conversar sobre los resultados.');
-  document.getElementById('confirm-wa-btn').href = 'https://wa.me/50688813232?text=' + msg;
+  document.getElementById('result-wa-btn').href = 'https://wa.me/50688813232?text=' + msg;
+
   window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
