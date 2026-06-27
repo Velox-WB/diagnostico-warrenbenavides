@@ -407,7 +407,7 @@ async function generateReport() {
   var prompt = 'Eres Warren Benavides, Consultor en Estrategia de Negocio. Has recibido las respuestas de un diagnóstico estratégico de ' + userData.nombre + ' ' + userData.apellidos + ', ' + userData.puesto + ' de ' + userData.empresa + ' en ' + userData.pais + '.\n\nPuntaje total: ' + score + '/40\n\nRespuestas:\n' + respuestas + '\n\nGenera un informe estratégico personalizado en español con esta estructura en HTML limpio (solo usa <h3>, <p>, <ul>, <li>, <strong>):\n\n<h3>Resumen Ejecutivo</h3>\n[2-3 párrafos honestos y directos sobre el estado estratégico del negocio. Menciona a ' + userData.nombre + ' por nombre. Sé específico.]\n\n<h3>Brechas Estratégicas Identificadas</h3>\n[3-5 brechas concretas basadas en las respuestas. Específico sobre qué área falla y por qué importa.]\n\n<h3>Áreas de Oportunidad</h3>\n[3-4 oportunidades concretas si resuelve las brechas. Cuantifica el impacto cuando sea posible.]\n\n<h3>Recomendaciones Prioritarias</h3>\n[3 recomendaciones accionables ordenadas por prioridad. Específicas, no genéricas.]\n\n<h3>Próximo Paso</h3>\n[1 párrafo que invite a ' + userData.nombre + ' a conversar con Warren. Directo, ejecutivo, sin presión.]\n\nTono: ejecutivo, directo, honesto. Sin lenguaje corporativo ni frases vacías.';
 
   try {
-    var res = await fetch('/.netlify/functions/analyze', {
+    var res = await fetch('/api/analyze', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ prompt: prompt, userData: userData, answers: answers, score: score })
